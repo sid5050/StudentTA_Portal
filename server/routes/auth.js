@@ -13,12 +13,12 @@ router.post("/", async(req, res) => {
         //     console.log("In error");
         //     return res.status(400).send({message: error.details[0].message});
         // }
-        const student = await StudentModel.findOne({rollno: req.body.rollno});
+        const student = await StudentModel.findOne({rollno: req.body.rollno, role: req.body.role});
         // console.log(student.generateAuthToken());
         console.log("Here, After student");
         if(!student){
             console.log("Student not found");
-            return res.status(401).send({message: "Invalid Rollnumber or Password"});
+            return res.status(401).send({message: "Invalid Details"});
         }
         const validPassword = await bcrypt.compare(
             req.body.password, student.password
@@ -26,7 +26,7 @@ router.post("/", async(req, res) => {
         
         if(!validPassword) {
             console.log("Invalid Password");
-            return res.status(401).send({message: "Invalid Rollnumber or Password"});
+            return res.status(401).send({message: "Invalid Details"});
         }
 
         const token = student.generateAuthToken();
@@ -34,7 +34,7 @@ router.post("/", async(req, res) => {
         console.log("Here, After Token");
         return res.status(200).send({data: token, message: "Logged In!!"});
     } catch(error) {
-        return res.status(200).send({message: "Server Error!!"});
+        return res.status(500).send({message: "Server Error!!"});
     }
 })
 

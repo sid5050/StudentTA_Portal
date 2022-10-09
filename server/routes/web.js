@@ -27,7 +27,7 @@ router.post("/signup", async(req, res) => {
         console.log(err);
         res.status(500).send({message: "Internal Server Error!"});
     }
-})
+});
 
 router.post("/addquery", async(req, res) => {
     try {
@@ -51,16 +51,44 @@ router.post("/addquery", async(req, res) => {
         console.log(error);
         return res.status(500).send({message: "Server Error!!"});
     }
-})
+});
 
 router.get("/getqueries", async(req, res) => {
     try{
         console.log(req.query);
-        const queries = await QueryModel.find({rollno : req.query.rollno});
+        const queries = await QueryModel.find({studentrollno : req.query.rollno});
+        console.log(queries);
         return res.status(200).send(queries);
     } catch(error) {
         console.log(error);
+        return res.status(500).send({message: "Server Error!!"});
     }
-})
+});
+
+router.get("/getconcerns", async(req, res) => {
+    try{
+        console.log(req.query);
+        const queries = await QueryModel.find({tarollno : req.query.rollno});
+        return res.status(200).send(queries);
+    } catch(error) {
+        console.log(error);
+        return res.status(500).send({message: "Server Error!!"});
+    }
+});
+
+router.patch("/addtacomment", async(req, res) => {
+    try{
+        console.log(req.body);
+        // const queries = await QueryModel.find({_id : req.body.id});
+        // console.log(queries);
+        let query = await QueryModel.findOneAndUpdate({"_id": req.body.id}, { "$set" :{"tacomment": req.body.comment.tacomment, "isactive": req.body.comment.isactive }});
+        query = await QueryModel.findOne({_id: req.body.id});
+        console.log("Here",query);
+        return res.status(200).send(query);
+    } catch(error) {
+        console.log(error);
+        return res.status(500).send({message: "Server Error!!"});
+    }
+});
 
 module.exports = router;
